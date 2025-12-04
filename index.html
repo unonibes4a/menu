@@ -238,18 +238,7 @@
         }
 
         async function loadInitialButtonsFromPython() {
-            if (window.pywebview && window.pywebview.api) {
-                try {
-                    const jsonString = await window.pywebview.api.get_last_dropped_json();
-                    if (jsonString) {
-                        const buttonsData = JSON.parse(jsonString);
-                        clearAllButtons();
-                        createButtonsFromData(buttonsData);
-                    }
-                } catch (error) {
-                    console.error("Error al cargar JSON inicial desde Python:", error);
-                }
-            }
+      
         }
 
         window.onload = () => {
