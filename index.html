@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botones con Tooltip y Drag & Drop de JSON</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-wrap: wrap;
+            gap: 20px;
+            border: 4px dashed transparent;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        body.drag-active {
+            border-color: #0077ff;
+        }
+
+        .fancy-button-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .fancy-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #333;
+            border: 2px solid #555;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            outline: none;
+        }
+
+        .fancy-button:hover {
+            background-color: #444;
+            border-color: #0077ff;
+            color: #0077ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        .fancy-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .fancy-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            z-index: 1000;
+            transform: translateY(10px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+        }
+
+        .fancy-tooltip::before {
+            content: '';
+            position: absolute;
+            border-width: 5px;
+            border-style: solid;
+        }
+
+        .fancy-tooltip-bottom {
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+        }
+        .fancy-tooltip-bottom::before {
+            top: -10px;
+            border-color: transparent transparent #333 transparent;
+        }
+
+        .fancy-tooltip-top {
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+        }
+        .fancy-tooltip-top::before {
+            bottom: -10px;
+            border-color: #333 transparent transparent transparent;
+            top: unset;
+        }
+
+        .fancy-tooltip-left {
+            top: 50%;
+            right: 100%;
+            transform: translateY(-50%) translateX(-10px);
+        }
+        .fancy-tooltip-left::before {
+            left: unset;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            border-color: transparent transparent #333 transparent;
+        }
+
+        .fancy-tooltip-right {
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%) translateX(10px);
+        }
+        .fancy-tooltip-right::before {
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            border-color: transparent transparent #333 transparent;
+        }
+
+        .fancy-button-container:hover .fancy-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .fancy-button-container:hover .fancy-tooltip-top {
+            transform: translateX(-50%) translateY(0);
+        }
+        .fancy-button-container:hover .fancy-tooltip-left {
+            transform: translateY(-50%) translateX(0);
+        }
+        .fancy-button-container:hover .fancy-tooltip-right {
+            transform: translateY(-50%) translateX(0);
+        }
+
+    </style>
+</head>
+<body>
+
+    <script>
+        class FancyTooltipButton {
+            constructor(parentEl, id, text, tooltipText, onClickCallback, tooltipPosition = 'bottom') {
+                this.parentEl = parentEl;
+                this.id = id;
+                this.text = text;
+                this.tooltipText = tooltipText;
+                this.onClickCallback = onClickCallback;
+                this.tooltipPosition = tooltipPosition; 
+                this.render();
+            }
+
+            render() {
+                this.container = document.createElement('div');
+                this.container.classList.add('fancy-button-container');
+
+                this.button = document.createElement('button');
+                this.button.id = this.id;
+                this.button.classList.add('fancy-button');
+                this.button.textContent = this.text;
+                this.button.onclick = this.onClickCallback; 
+
+                this.tooltip = document.createElement('span');
+                this.tooltip.classList.add('fancy-tooltip');
+                this.tooltip.textContent = this.tooltipText;
+                this.tooltip.classList.add(`fancy-tooltip-${this.tooltipPosition}`);
+
+                this.container.appendChild(this.button);
+                this.container.appendChild(this.tooltip);
+                this.parentEl.appendChild(this.container);
+            }
+
+            updateText(newText) {
+                this.button.textContent = newText;
+            }
+
+            updateTooltipText(newTooltipText) {
+                this.tooltip.textContent = newTooltipText;
+            }
+
+            disable() {
+                this.button.disabled = true;
+                this.button.style.opacity = '0.5';
+                this.button.style.cursor = 'not-allowed';
+            }
+
+            enable() {
+                this.button.disabled = false;
+                this.button.style.opacity = '1';
+                this.button.style.cursor = 'pointer';
+            }
+        }
+
+        function clearAllButtons() {
+            document.querySelectorAll('.fancy-button-container').forEach(buttonContainer => {
+                buttonContainer.remove();
+            });
+        }
+
+        function createButtonsFromData(buttonsData) {
+            const body = document.body;
+            buttonsData.forEach((buttonConfig, index) => {
+                const buttonId = buttonConfig.id || `btnDynamic${index}`; 
+                
+                new FancyTooltipButton(
+                    body,
+                    buttonId,
+                    buttonConfig.botontexto,
+                    buttonConfig.hover,
+                    () => {
+                        if (buttonConfig.url) {
+                            window.location.href = buttonConfig.url;
+                        } else if (window.pywebview && window.pywebview.api && buttonConfig.api_call) {
+                            if (typeof window.pywebview.api[buttonConfig.api_call] === 'function') {
+                                window.pywebview.api[buttonConfig.api_call]();
+                            } else {
+                                alert(`Error: La función de API "${buttonConfig.api_call}" no existe.`);
+                            }
+                        } else {
+                            alert(`Botón "${buttonConfig.botontexto}" presionado. No hay URL o API definida.`);
+                        }
+                    },
+                    buttonConfig.tooltipPosition || 'bottom'
+                );
+            });
+        }
+
+        async function loadInitialButtonsFromPython() {
+            if (window.pywebview && window.pywebview.api) {
+                try {
+                    const jsonString = await window.pywebview.api.get_last_dropped_json();
+                    if (jsonString) {
+                        const buttonsData = JSON.parse(jsonString);
+                        clearAllButtons();
+                        createButtonsFromData(buttonsData);
+                    }
+                } catch (error) {
+                    console.error("Error al cargar JSON inicial desde Python:", error);
+                }
+            }
+        }
+
+        window.onload = () => {
+            const body = document.body;
+
+            body.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                body.classList.add('drag-active');
+            });
+
+            body.addEventListener('dragleave', (e) => {
+                body.classList.remove('drag-active');
+            });
+
+            body.addEventListener('drop', (e) => {
+                e.preventDefault();
+                body.classList.remove('drag-active');
+
+                if (e.dataTransfer.items) {
+                    for (let i = 0; i < e.dataTransfer.items.length; i++) {
+                        if (e.dataTransfer.items[i].kind === 'file') {
+                            const file = e.dataTransfer.items[i].getAsFile();
+                            if (file.type === 'application/json' || file.name.endsWith('.json')) {
+                                const reader = new FileReader();
+                                reader.onload = async (event) => {
+                                    try {
+                                        const jsonContent = event.target.result; 
+                                        const parsedJson = JSON.parse(jsonContent); 
+
+                                        clearAllButtons();
+                                        createButtonsFromData(parsedJson);
+
+                                        if (window.pywebview && window.pywebview.api) {
+                                            const success = await window.pywebview.api.store_dropped_json(jsonContent);
+                                            if (success) {
+                                                console.log("JSON enviado y almacenado en Python.");
+                                            } else {
+                                                console.error("Fallo al almacenar JSON en Python.");
+                                            }
+                                        }
+
+                                    } catch (parseError) {
+                                        console.error("Error al parsear el archivo JSON:", parseError);
+                                        alert("El archivo arrastrado no es un JSON válido.");
+                                    }
+                                };
+                                reader.onerror = (readError) => {
+                                    console.error("Error al leer el archivo:", readError);
+                                    alert("No se pudo leer el archivo.");
+                                };
+                                reader.readAsText(file);
+                                return;
+                            } else {
+                                alert("Por favor, arrastra un archivo JSON.");
+                            }
+                        }
+                    }
+                }
+            });
+
+            loadInitialButtonsFromPython();
+
+            new FancyTooltipButton(
+                body,
+                'btnMyPaint',  
+                'MP',
+                'Abrir la aplicación de dibujo',  
+                () => {
+                    if (window.pywebview && window.pywebview.api) {
+                        window.pywebview.api.open_gimp_page();
+                    } else {
+                        alert('Error: No se pudo conectar con la aplicación de escritorio.');
+                    }
+                },
+                'top'
+            );
+            new FancyTooltipButton(
+                body,
+                'idpintaresta',  
+                'Pt',
+                'Abrir pintaresta',  
+                () => {
+                   
+                        window.location.href="https://unonibes4a.github.io/pintaresta/";
+                   
+                },
+                'top'
+            );
+             new FancyTooltipButton(
+                body,
+                'idmypaint',  
+                'My',
+                'Abrir my paint',  
+                () => {
+                   
+                        window.location.href="https://unonibes4a.github.io/mypaint/";
+                   
+                },
+                'top'
+            );
+            new FancyTooltipButton(
+                body,
+                'idvideo',  
+                'VD',
+                'Abrir video edit',  
+                () => {
+                   
+                        window.location.href="https://unonibes4a.github.io/editorVideoGio/";
+                   
+                },
+                'top'
+            );
+            new FancyTooltipButton(
+                body,
+                'idotrosfiltros',  
+                'Of',
+                'Abrir ostros filtros',  
+                () => {
+                   
+                        window.location.href="https://unonibes4a.github.io/imgcarpetasFiltros/";
+                   
+                },
+                'top'
+            );
+            new FancyTooltipButton(
+                body,
+                'idotaduido',  
+                'EA',
+                'Abrir editor de audio',  
+                () => {
+                   
+                        window.location.href="https://unonibes4a.github.io/editorAudio/";
+                   
+                },
+                'top'
+            );
+
+             
+     
+             
+        };
+    </script>
+
+</body>
+</html>
