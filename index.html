@@ -19,6 +19,13 @@
             gap: 20px;
             border: 4px dashed transparent;
             transition: border-color 0.3s ease-in-out;
+
+            display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
         }
 
         body.drag-active {
@@ -263,7 +270,7 @@ video{
     </style>
 </head>
 <body>
-    <video id="idvideo" src="https://www.pexels.com/es-es/download/video/3129671/"  autoplay loop  ></video>
+    <video id="idvideo"   ></video>
     <div id="i612dboxdic2025"> <label for="" class="btdc6122025" id="idcerrar">X</label><div class="elegant-container">
   <input type="text" class="custom-input" id="idtxt" placeholder="urls nav">
   <labe id="idokdv" class="btdc6122025">&#10148;</label>
@@ -284,36 +291,12 @@ txturl=e.target.value;
        document.getElementById("i612dboxdic2025").style.display="none";
  
     };
-     window.onload = function() {
+     window.addEventListener("load",(e)=> {       alert("load1");
             const videoElement = document.getElementById('idvideo');
-
-            if (videoElement) {
-                const playPromise = videoElement.play();
-
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        console.log("El video está intentando reproducirse automáticamente.");
-                    }).catch(error => {
-                        console.warn("La reproducción automática del video fue bloqueada.", error);
-                    });
-                }
-                videoElement.loop = true;
-
-                videoElement.addEventListener('play', () => {
-                    console.log('El video ha comenzado a reproducirse.');
-                });
-
-                videoElement.addEventListener('pause', () => {
-                    console.log('El video se ha pausado.');
-                });
-
-                videoElement.addEventListener('ended', () => {
-                    console.log('El video ha terminado.');
-                });
-            } else {
-                console.error("El elemento de video con ID 'idvideo' no fue encontrado.");
-            }
-        };
+               videoElement.loop = true;
+            videoElement.src="https://www.pexels.com/es-es/download/video/3129671/";
+            videoElement.play();          
+        });
 
   </script>
 </div></div>
