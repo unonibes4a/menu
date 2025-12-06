@@ -291,7 +291,7 @@ txturl=e.target.value;
        document.getElementById("i612dboxdic2025").style.display="none";
  
     };
-     window.addEventListener("load",(e)=> {       alert("load1");
+     window.addEventListener("load",(e)=> { 
             const videoElement = document.getElementById('idvideo');
                videoElement.loop = true;
             videoElement.src="https://www.pexels.com/es-es/download/video/3129671/";
@@ -425,25 +425,24 @@ txturl=e.target.value;
                                         if (window.pywebview && window.pywebview.api) {
                                             const success = await window.pywebview.api.store_dropped_json(jsonContent);
                                             if (success) {
-                                                console.log("JSON enviado y almacenado en Python.");
+                             
                                             } else {
-                                                console.error("Fallo al almacenar JSON en Python.");
+                                         
                                             }
                                         }
 
                                     } catch (parseError) {
-                                        console.error("Error al parsear el archivo JSON:", parseError);
-                                        alert("El archivo arrastrado no es un JSON válido.");
+                                   
+                                        
                                     }
                                 };
                                 reader.onerror = (readError) => {
-                                    console.error("Error al leer el archivo:", readError);
-                                    alert("No se pudo leer el archivo.");
+                                  
                                 };
                                 reader.readAsText(file);
                                 return;
                             } else {
-                                alert("Por favor, arrastra un archivo JSON.");
+                            
                             }
                         }
                     }
