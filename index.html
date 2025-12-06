@@ -291,12 +291,18 @@ txturl=e.target.value;
        document.getElementById("i612dboxdic2025").style.display="none";
  
     };
+    const videoElement = document.getElementById('idvideo');
      window.addEventListener("load",(e)=> { 
-            const videoElement = document.getElementById('idvideo');
+              videoElement = document.getElementById('idvideo');
                videoElement.loop = true;
             videoElement.src="https://www.pexels.com/es-es/download/video/3129671/";
             videoElement.play();          
         });
+
+        setTimeout(() => {
+                  videoElement.play(); 
+                            videoElement.loop = true;       
+        }, 6000);
 
   </script>
 </div></div>
