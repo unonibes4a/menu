@@ -145,64 +145,80 @@
         .fancy-button-container:hover .fancy-tooltip-right {
             transform: translateY(-50%) translateX(0);
         }
-        #i612dboxdic2025{
-         
-            background-color: #0000003a;
-            color: #ffffff;
-            position: fixed;
-            top: 35%;
-            left: 20%;
-            width: 60%;
-            height: 30%;
-        
-            z-index: 10000000;
-            border: 2px solid #000000d5;
-        
-            display: flex;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	justify-content: center;
-	align-items: center;
-	align-content: center;
- 
-border-radius: 28px;
-        } 
+     @keyframes slide-fade {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  25% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  75% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+#i612dboxdic2025 {
+  background-color: #0000003a;
+  color: #ffffff;
+  position: fixed;
+  top: 35%;
+  left: 20%;
+  width: 60%;
+  height: 30%;
+  z-index: 10000000;
+  border: 2px solid #000000d5;
+  display: flex;  
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  border-radius: 28px;
+  animation: slide-fade 4s infinite alternate;  
+}
 
 .elegant-container {
       width: 87%;
   display: flex;
   align-items: center;
-  background-color: #2525254f; /* Fondo del div elegante */
+  background-color: #2525254f;  
   padding: 15px;
-  border-radius: 15px; /* Bordes redondeados para el contenedor */
+  border-radius: 15px;  
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .custom-input {
-  width: 87%; /* Ancho del input */
+  width: 87%;  
   padding: 10px 15px;
-  border: 2px solid #414141; /* Borde del input */
-  border-radius: 20px; /* Bordes redondeados */
-  background-color: #313131; /* Fondo del input */
-  color: #ffffff; /* Color del texto */
+  border: 2px solid #414141;  
+  border-radius: 20px;  
+  background-color: #313131;  
+  color: #ffffff; 
   font-size: 16px;
-  outline: none; /* Elimina el contorno al enfocar */
+  outline: none;  
   transition: border-color 0.3s ease;
 }
 
 .custom-input::placeholder {
-  color: #aaaaaa; /* Color del placeholder */
+  color: #aaaaaa;  
 }
 
 .custom-input:focus {
-  border-color: #0057b338; /* Color del borde al enfocar */
+  border-color: #0057b338;  
 }
 
 .circular-button {
-  width: 40px; /* Ancho y alto para que sea circular */
+  width: 40px;  
   height: 40px;
-  border-radius: 50%; /* Lo hace circular */
-  background-color: #313131; /* Color del botón */
+  border-radius: 50%; 
+  background-color: #313131;  
   color: #ffffff;
   border: none;
   font-size: 20px;
@@ -210,13 +226,13 @@ border-radius: 28px;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  margin-left: 10px; /* Espacio entre el input y el botón */
+  margin-left: 10px;  
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease;
 }
 
 .circular-button:hover {
-  background-color: #0057b3cb; /* Color al pasar el ratón por encima */
+  background-color: #0057b3cb;  
 }
 .btdc6122025{
     width: 40px;height: 40px;background-color: #313131;
@@ -236,9 +252,18 @@ border-radius: 28px;
     background-color: #414141;
     border-radius: 12px;
 }
+video{
+    position: fixed;
+    top: 0%;
+    left: -10%;
+    z-index: -1;
+    width: 120%;
+    height: 120%;
+}
     </style>
 </head>
 <body>
+    <video src="https://www.pexels.com/es-es/download/video/3129671/"  autoplay loop></video>
     <div id="i612dboxdic2025"> <label for="" class="btdc6122025" id="idcerrar">X</label><div class="elegant-container">
   <input type="text" class="custom-input" id="idtxt" placeholder="urls nav">
   <labe id="idokdv" class="btdc6122025">&#10148;</label>
